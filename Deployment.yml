@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular
+spec:
+  selector:
+    matchLabels:
+      app: angular
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: angular
+    spec:
+      containers:
+        - name: angularapp
+          image: 639731234254.dkr.ecr.ca-central-1.amazonaws.com/angular:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
