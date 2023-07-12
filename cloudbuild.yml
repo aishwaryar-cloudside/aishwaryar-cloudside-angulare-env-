@@ -10,7 +10,7 @@ steps:
   - 'Service.yml'
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=eks-cluster'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
 
 # This step copies the applied manifest to the production branch
 # The COMMIT_SHA variable is automatically
