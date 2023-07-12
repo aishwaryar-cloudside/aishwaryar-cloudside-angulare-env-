@@ -6,7 +6,7 @@ steps:
   args:
   - 'apply'
   - '-f'
-  - 'Deployment.yml' 'service.yml'
+  - 'Deployment.yml' 
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
