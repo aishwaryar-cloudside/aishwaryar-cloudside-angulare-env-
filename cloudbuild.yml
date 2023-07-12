@@ -1,12 +1,13 @@
 steps:
 # This step deploys the new version of our container image
 # in the eks-cluster Kubernetes Engine cluster.
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/docker'
   id: Deploy
   args:
   - 'apply'
   - '-f'
-  - 'kubernetes.yaml'
+  - 'Deployment.yaml'
+  - 'Service.yaml'
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=eks-cluster'
