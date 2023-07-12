@@ -7,7 +7,7 @@ steps:
   - 'apply'
   - '-f'
   - 'Deployment.yml'
-  - 'Service.yml'
+  - 'service.yml'
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
