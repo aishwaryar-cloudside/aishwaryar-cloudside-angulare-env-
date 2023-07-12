@@ -1,67 +1,33 @@
-# [START cloudbuild]
 steps:
-# This step runs the unit tests on the app
-- name: 'angular'
-  id: Test
-  entrypoint: /bin/sh
+# This step deploys the new version of our container image
+# in the hello-cloudbuild Kubernetes Engine cluster.
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Deploy
   args:
-  - -c
-  
-# This step builds the container image.
-- name: 'gcr.io/cloud-builders/docker'
-  id: Build
-  args:
-  - 'build'
-  - '-t'
-  - 'us-central1-docker.pkg.dev/vital-analogy-389705/my-repository/angular:ms1'
-  - '.'
+  - 'apply'
+  - '-f'
+  - 'kubernetes.yaml'
+  env:
+  - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=eks-cluster'
 
-# This step pushes the image to Artifact Registry
-# The PROJECT_ID and SHORT_SHA variables are automatically
+# This step copies the applied manifest to the production branch
+# The COMMIT_SHA variable is automatically
 # replaced by Cloud Build.
-- name: 'gcr.io/cloud-builders/docker'
-  id: Push
-  args:
-  - 'push'
-  - 'us-central1-docker.pkg.dev/vital-analogy-389705/my-repository/angular:ms1'  
-# [END cloudbuild]
-
-# [START cloudbuild-trigger-cd]
-# This step clones the angular-deployment-trigger repository
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: Clone env repository
-  entrypoint: /bin/sh
-  args:
-  - '-c'
-  - |
-    gcloud source repos clone angular-deployment-trigger && \
-    cd angular-deployment-trigger && \
-    git checkout candidate && \
-    git config user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)')
-
-# This step generates the new manifest
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: Generate manifest
-  entrypoint: /bin/sh
-  args:
-  - '-c'
-  - |
-     sed "s/GOOGLE_CLOUD_PROJECT/${PROJECT_ID}/g" kubernetes.yaml.tpl | \
-     sed "s/COMMIT_SHA/${SHORT_SHA}/g" > hello-cloudbuild-env/kubernetes.yaml
-
-# This step pushes the manifest back to angular-deployment-trigger
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: Push manifest
+- name: 'gcr.io/cloud-builders/git'
+  id: Copy to production branch
   entrypoint: /bin/sh
   args:
   - '-c'
   - |
     set -x && \
-    cd angular-deployment-trigger && \
-    git add Deployment.yaml service.yml && \
-    git commit -m "Deploying image us-central1-docker.pkg.dev/vital-analogy-389705/my-repository/angular:ms1
-    Built from commit angular:ms1 of repository angular-deployment-trigger
-    Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
-    git push origin candidate
-
-# [END cloudbuild-trigger-cd]
+    # Configure Git to create commits with Cloud Build's service account
+    git config user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)') && \
+    # Switch to the production branch and copy the kubernetes.yaml file from the candidate branch
+    git fetch origin production && git checkout production && \
+    git checkout $COMMIT_SHA kubernetes.yaml && \
+    # Commit the kubernetes.yaml file with a descriptive commit message
+    git commit -m "Manifest from commit $COMMIT_SHA
+    $(git log --format=%B -n 1 $COMMIT_SHA)" && \
+    # Push the changes back to Cloud Source Repository
+    git push origin production
