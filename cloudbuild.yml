@@ -6,8 +6,8 @@ steps:
   args:
   - 'apply'
   - '-f'
-  - 'Deployment.yaml'
-  - 'Service.yaml'
+  - 'Deployment.yml'
+  - 'Service.yml'
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=eks-cluster'
