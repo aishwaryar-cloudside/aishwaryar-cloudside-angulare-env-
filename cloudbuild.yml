@@ -1,7 +1,7 @@
 # [START cloudbuild]
 steps:
 # This step runs the unit tests on the app
-- name: 'gcr.io/cloud-builders/docker'
+- name: 'angular'
   id: Test
   entrypoint: /bin/sh
   args:
