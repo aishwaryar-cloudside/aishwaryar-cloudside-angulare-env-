@@ -7,6 +7,13 @@ steps:
   - 'apply'
   - '-f'
   - 'Deployment.yml' 
+  
+  - name: 'gcr.io/cloud-builders/kubectl'
+  id: Expose
+  args:
+  - 'apply'
+  - '-f'
+  - 'service.yml' 
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
