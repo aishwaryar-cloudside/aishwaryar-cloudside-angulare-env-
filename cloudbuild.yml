@@ -1,12 +1,5 @@
 steps:
-  # Step 1: Build Angular Application
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['install']
-
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['run', 'build']
-
-  # Step 2: Deploy to Kubernetes
+  # Step 1: Deploy to Kubernetes
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'apply'
@@ -14,6 +7,7 @@ steps:
       - 'Deployment.yml'
       - '-f'
       - 'service.yml'
+    timeout: '600s'
 
 options:
   logging: 'CLOUD_LOGGING_ONLY'
