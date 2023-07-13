@@ -1,42 +1,18 @@
-steps:
-# This step deploys the new version of our container image
-# in the eks-cluster Kubernetes Engine cluster.
-- name: 'gcr.io/cloud-builders/kubectl'
-  id: Deploy
-  args:
-  - 'apply'
-  - '-f'
-  - 'Deployment.yml' 
-  
+  steps:
+  # Step 1: Build Angular Application
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+   
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'build']
+   
+  # Step 2: Deploy to Kubernetes
   - name: 'gcr.io/cloud-builders/kubectl'
-  id: Expose
-  args:
-  - 'apply'
-  - '-f'
-  - 'service.yml' 
-  env:
-  - 'CLOUDSDK_COMPUTE_REGION=us-central1'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
-
-# This step copies the applied manifest to the production branch
-# The COMMIT_SHA variable is automatically
-# replaced by Cloud Build.
-- name: 'gcr.io/cloud-builders/git'
-  id: Copy to main branch
-  entrypoint: /bin/sh
-  args:
-  - '-c'
-  - |
-    set -x && \
-    # Configure Git to create commits with Cloud Build's service account
-    git config user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)') && \
-    # Switch to the main branch and copy the Deployment.yaml && service.yaml file from the candidate branch
-    git fetch origin main && git checkout main && \
-    git checkout $COMMIT_SHA Deployment.yaml && service.yaml && \
-    # Commit the Deployment.yaml && service.yaml file with a descriptive commit message
-    git commit -m "Manifest from commit $COMMIT_SHA
-    $(git log --format=%B -n 1 $COMMIT_SHA)" && \
-    # Push the changes back to Cloud Source Repository
-    git push origin production
+    args:
+      - 'apply'
+      - '-f'
+      - 'your-deployment-file.yml'
+      - '-f'
+      - 'your-service-file.yml'
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY   
