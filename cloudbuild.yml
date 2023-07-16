@@ -8,6 +8,9 @@ steps:
       - '-f'
       - 'service.yml'
     timeout: '600s'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=eks-angular'
 
 options:
   logging: 'CLOUD_LOGGING_ONLY'
