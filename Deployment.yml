@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: angularapp
-          image: 639731234254.dkr.ecr.ca-central-1.amazonaws.com/angular:latest
+          image: us-central1-docker.pkg.dev/vital-analogy-389705/my-repository/angular:ms1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
